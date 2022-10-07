@@ -8,90 +8,109 @@ import java.util.ArrayList;
 
 public class songsService
 {
-    songsDAO songDAO;
-
-    public boolean addSong(songs song,ArrayList<songs> songsList) throws SQLException
+    private boolean checkSong(String songname, ArrayList<songs> songslist) throws SQLException,JukeboxException
     {
         boolean result=false;
-        if(checkSong(song.getSongname(),songsList)==false)
+        if(songslist!=null && songname!=null) {
+            for (songs Song : songslist) {
+                if (Song.getSongname().equalsIgnoreCase(songname.trim())) {
+                    result = true;
+                }
+            }
+        }
+        else { throw new JukeboxException("Song can not be added"); }
+        return result;
+    }
+
+    public boolean addSong(songs song,ArrayList<songs> songslist) throws SQLException,JukeboxException
+    {
+        boolean result=false;
+
+        if(!checkSong(song.getSongname(),songslist))
         {
-            songDAO.insertSongs(song);
+            songsDAO songsDao=new songsDAO();
+            songsDao.insertSongs(song);
+            result=true;
         }
+       else { throw new JukeboxException("Song can not be added"); }
         return result;
     }
 
-    private boolean checkSong(String songname, ArrayList<songs> songsList)
+    public ArrayList<songs> getAllSongs() throws SQLException{
+        songsDAO songsDao=new songsDAO();
+        return songsDao.viewAllSongs();
+    }
+
+    public void displaySongs(ArrayList<songs> songslist)
     {
-        boolean result=false;
-        for(songs Song:songsList){
-            if(Song.getSongname().equalsIgnoreCase(songname)){
-                result = true;
-            }
+        System.out.format("%7s\t%15s\t%20s\t%20s\t%20s\t%20s","songid","songname","artistname","songgenre","album","songduration");
+        for(songs Song:songslist){
+            System.out.println(Song);
         }
-        return result;
     }
 
-    public void displaySongs(ArrayList<songs> songsList)
-    {
-        for(songs Song:songsList){
-            System.out.format("%10s\t%30s\t%30s\t%30s\t%30s\t%20s","songid","songname","artistname","songgenre","album","songduration");
-            }
-    }
-
-    public songs getSongbyName(ArrayList<songs> songsList, String songname)
+    public songs getSongbyName(ArrayList<songs> songslist, String songname)
     {
         songs selectSong=null;
-        for(songs Song:songsList){
-            //if(songsList.contains(Song))
-            if((Song.getSongname().contains(songname)))
+        for(songs Song:songslist)
+        {
+            if((Song.getSongname().equalsIgnoreCase(songname)))
             {
                selectSong=Song;
+               break;
             }
         }
         return selectSong;
     }
+    public ArrayList<songs> getSongbyGenre(String songgenre,ArrayList<songs> songslist) throws JukeboxException {
+        ArrayList<songs> genrelist=null;
+        if(songslist.isEmpty() && songgenre ==null) {
+            throw new JukeboxException("Song list is empty or Genre not present");
+        }
+        else{
+            genrelist = new ArrayList<>();
+            for (songs Song : songslist)
+            {
+                if(Song.getSonggenre().equalsIgnoreCase((songgenre))){
+                    genrelist.add(Song);
+                }
+            }
+        }
+        return genrelist;
+    }
 
-    public ArrayList<songs> getSongbyAlbum(ArrayList<songs> songsList, String album){
-        ArrayList<songs> albumList=null;
-        if(albumList.isEmpty()==false && album !=null)
+    public ArrayList<songs> getSongbyArtist(String artistname,ArrayList<songs> songslist) throws JukeboxException
+    {
+        ArrayList<songs> artistlist=null;
+        if(songslist.isEmpty() && artistname==null)
         {
+            throw new JukeboxException("Artist list is empty or Artist not present");
+        }
+        else{
+            artistlist=new ArrayList<>();
+            for(songs Song:songslist){
+                if(Song.getArtistname().contains(artistname)){
+                    artistlist.add(Song);
+                }
+            }
+        }
+        return artistlist;
+    }
+
+    public ArrayList<songs> getSongbyAlbum(ArrayList<songs> songslist, String album) throws JukeboxException
+    {
+        ArrayList<songs> albumList=null;
+        if(songslist.isEmpty() && album==null)
+        {
+            throw new JukeboxException("Songs list is empty or Album not present");
+        } else{
             albumList = new ArrayList<>();
-            for (songs Song : songsList) {
+            for (songs Song : songslist) {
                 if (Song.getAlbum().equalsIgnoreCase(album)) {
                     albumList.add(Song);
                 }
             }
         }
         return albumList;
-    }
-
-    public ArrayList<songs> getSongbyArtist(String artistname,ArrayList<songs> songslist){
-        ArrayList<songs> artistList=null;
-        if(artistList.isEmpty()==false && artistname !=null)
-        {
-            artistList=new ArrayList<>();
-            for(songs Song:songslist){
-                if(Song.getArtistname().contains(artistname)){
-                    artistList.add(Song);
-                }
-            }
-        }
-        return artistList;
-    }
-
-    public ArrayList<songs> getSongbyGenre(String songgenre,ArrayList<songs> songsList)
-    {
-        ArrayList<songs> genreList=null;
-        if(genreList.isEmpty()==false && songgenre !=null)
-        {
-            genreList = new ArrayList<>();
-            for (songs Song : songsList)
-            {
-                if(Song.getSonggenre().equalsIgnoreCase((songgenre))){
-                    genreList.add(Song);
-                }
-            }
-        }
-        return genreList;
     }
 }

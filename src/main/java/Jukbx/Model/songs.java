@@ -7,9 +7,7 @@ public class songs {
     private String songgenre;
     private String album;
     private String songduration;
-
-    public songs() {
-    }
+    public songs() { }
     public songs(int songid, String songname, String artistname, String songgenre, String album, String songduration) {
         this.songid = songid;
         this.songname = songname;
@@ -25,7 +23,6 @@ public class songs {
         this.album = album;
         this.songduration = songduration;
     }
-
     public int getSongid() { return songid; }
     public void setSongid(int songid) { this.songid = songid; }
 
@@ -47,6 +44,6 @@ public class songs {
 
     @Override
     public String toString() {
-        return String.format("%10s\t%30s\t%30s\t%30s\t%30s\t%20s",songid,songname,artistname,songgenre,album,songduration);
+        return String.format("\n%5s\t%15s\t%20s\t%20s\t%20s\t%15s",songid,songname,artistname,songgenre,album,songduration);
     }
 }

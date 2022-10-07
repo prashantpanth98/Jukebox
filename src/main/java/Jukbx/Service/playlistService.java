@@ -7,17 +7,25 @@ import java.util.Hashtable;
 
 public class playlistService
 {
-    boolean addPlaylist(String playlistname, int playlistid, Hashtable<String,Integer> playlist){
-        boolean playlistPresent=playlist.containsKey(playlistname);
-        if(playlistPresent=false){
-            playlist.put(playlistname,playlistid);
+    public boolean addPlaylist(String playlistname, Hashtable<String,Integer> playlist) throws JukeboxException,SQLException {
+        boolean result=false;
+        if (playlistname==null || playlist.isEmpty() || playlistname.isEmpty() || playlist==null){
+            throw new JukeboxException("Please provide proper details");
         }
-        return playlistPresent;
+        else {
+            boolean playlistPresent = playlist.containsKey(playlistname);
+            if (playlistPresent == false) {
+                playlistDAO playlistDao=new playlistDAO();
+                playlistDao.createPlaylist(playlistname);
+                result=true;
+            }
+        }
+        return result;
     }
 
-    Hashtable<String,Integer> getAllPlaylist() throws SQLException
+    public Hashtable<String,Integer> getAllPlaylist() throws SQLException
     {
-        playlistDAO playlistDAO=new playlistDAO();
-        return playlistDAO.viewAllPlaylist();
+        playlistDAO playlistDao=new playlistDAO();
+        return playlistDao.viewAllPlaylist();
     }
 }
