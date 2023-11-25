@@ -239,25 +239,28 @@ public class MainJukebox
                             int option2 = sc.nextInt();
                             switch (option2) {
                                 case 1:
-                                    System.out.println("Enter the Playlist Name to play");
-                                    sc.nextLine();
-                                    String playlistname = sc.nextLine();
-                                    playerService plyrServc = new playerService();
-                                    ArrayList<Integer> songidtoplay = new ArrayList<>();
                                     try {
+                                        System.out.println("Enter the Playlist Name to play");
+                                        sc.nextLine();
+                                        String playlistname = sc.nextLine();
+                                        playerService plyrServc = new playerService();
+                                        ArrayList<Integer> songidtoplay = new ArrayList<>();
+
                                         ArrayList<songs> songsToPlay = playContServc.playlistContent(playlistname, playlist, songslist);
                                         Iterator<songs> songsIterator = songsToPlay.iterator();
                                         while (songsIterator.hasNext()) {
                                             songidtoplay.add(songsIterator.next().getSongid());
                                         }
-                                    }catch (ArrayIndexOutOfBoundsException e) { System.out.println(e.getMessage()); }
-                                    catch (JukeboxException e) { System.out.println(e.getMessage()); }
-                                    int idToPlay = 0;
-                                    int optn=0;
-                                        do {
-                                            plyrServc.playSong(songidtoplay.get(idToPlay));
+                                        System.out.println(songidtoplay);
+                                        int idToPlay = 0;
+                                        int optn = 0;
+                                        if (songidtoplay.size() == 0) {
+                                            throw new JukeboxException("playlist not available");
+                                        } else {
+                                            do {
+                                                plyrServc.playSong(songidtoplay.get(idToPlay));
                                                 while (true) {
-                                                   // try {
+                                                    // try {
                                                     System.out.println("1. Pause\n2. Resume\n3. Restart\n4. Stop\n5. Next\n6. Previous");
                                                     optn = sc.nextInt();
                                                     plyrServc.chooseOperation(optn);
@@ -281,8 +284,15 @@ public class MainJukebox
 //                                                        System.out.println("No More Previous Songs or Further Songs Available!");
 //                                                    }
 //                                                }
-                                        }while(optn == 5 || optn == 6);
-                                    break;
+                                            } while (optn == 5 || optn == 6);
+                                        }
+                                        break;
+                                    }
+                                    catch (ArrayIndexOutOfBoundsException e) {
+                                        System.out.println(e.getMessage());
+                                    } catch (JukeboxException e) {
+                                        System.out.println(e.getMessage());
+                                    }break;
                                 case 2:
                                     System.out.println("Returning to Main");
                                     pass = "Y";
