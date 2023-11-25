@@ -77,8 +77,9 @@ public class playlistContentService {
         return temp;
     }
 
+
     public ArrayList<songs> playlistContent(String playlistname, Hashtable<String, Integer> playlist, ArrayList<songs> songslist)
-            throws SQLException, JukeboxException,NullPointerException
+            throws SQLException, JukeboxException, NullPointerException
     {
         ArrayList<songs> songList = null;
         ArrayList<Integer> songIdList = null;
